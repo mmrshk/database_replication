@@ -1,0 +1,7 @@
+FROM postgres:latest
+
+# Copy the custom initialization script
+COPY master-config/init-master.sh /docker-entrypoint-initdb.d/init-master.sh
+
+# Ensure the necessary replication settings are provided through command-line options
+CMD ["postgres", "-c", "wal_level=logical", "-c", "max_replication_slots=4", "-c", "max_wal_senders=4", "-c", "listen_addresses=*"]

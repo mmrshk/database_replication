@@ -1,0 +1,47 @@
+version: '3.7'
+
+services:
+  pg-master:
+    build:
+      dockerfile: Dockerfile-master
+    environment:
+      POSTGRES_PASSWORD: mysecretpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgmaster_data:/var/lib/postgresql/data
+    networks:
+      - pg-network
+
+  pg-slave1:
+    build:
+      dockerfile: Dockerfile-slave1
+    environment:
+      POSTGRES_PASSWORD: mysecretpassword
+    volumes:
+      - pgslave1_data:/var/lib/postgresql/data
+    networks:
+      - pg-network
+    depends_on:
+      - pg-master
+
+  pg-slave2:
+    build:
+      dockerfile: Dockerfile-slave2
+    environment:
+      POSTGRES_PASSWORD: mysecretpassword
+    volumes:
+      - pgslave2_data:/var/lib/postgresql/data
+    networks:
+      - pg-network
+    depends_on:
+      - pg-master
+
+volumes:
+  pgmaster_data:
+  pgslave1_data:
+  pgslave2_data:
+
+networks:
+  pg-network:
+    driver: bridge
